@@ -1,9 +1,10 @@
 import './App.css'
-import {Navigate, Route, Routes} from "react-router-dom";
 import MainPage from "./components/MainPage.tsx";
+import Header from "./components/Header.tsx";
 function App() {
     return (
         <>
+            <Header/>
             <MainPage/>
             {/*<div>*/}
             {/*    <Routes>*/}
