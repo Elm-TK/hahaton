@@ -20,9 +20,9 @@ import {
     GridRowEditStopReasons, ruRU,
 } from '@mui/x-data-grid';
 
-import axios from "axios";
 import {User} from "../types/Matrix.tsx";
 import {useEffect, useState} from "react";
+import API_Service from "../API/API_Service.ts";
 
 
 interface EditToolbarProps {
@@ -42,9 +42,9 @@ export default function Table() {
 
 
     async function fetch() {
-        const res = await axios.get<User[]>("https://65742547f941bda3f2af6834.mockapi.io/testAPI")
+        const res =  await API_Service.getAll()
 
-        setRows(res.data)
+        setRows(res)
 
         initialRows = [rows]
 
