@@ -1,30 +1,29 @@
 import {Autocomplete, TextField} from "@mui/material";
-import API_Service from "../API/API_Service.ts";
-import {useEffect} from "react";
+// import API_Service from "../API/API_Service.ts";
+import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
+import SearchParamsStore from "../store/SearchParamsStore.tsx";
+// import SearchParamsService from "../service/SearchParamsService.tsx";
 
 const Search = () => {
     // const autocompleteOptions = API_Service.getForSearch()
-    let categories :string[] = []
-    let ids :number[] = []
-    let locations :string[] = []
-    async function fetch() {
-        const res =  await API_Service.getForSearch()
-        let cat :string[] = []
-        let i :number[] = []
-        let l :string[] = []
-        res.forEach((row) => {
-            ids.push(row.id)
-            categories.push(row.category)
-            locations.push(row.location)
-        })
-        categories = cat
-        ids = i
-        locations = l
+
+    const [ids, setIds] = useState<number[]>([])
+    const [categories, setCategories] = useState<string[]>([])
+    const [locations, setLocations] = useState<string[]>([])
+
+    const searchParams = new SearchParamsStore()
+
+    const fetch = async () => {
+        const params = await searchParams.getSearchParams()
+        setIds(params[0])
+        setCategories(params[1])
+        setLocations(params[2])
     }
+
     useEffect(() => {
         fetch()
-    },[])
+    }, [])
 
     return (
         <div className="flex">
