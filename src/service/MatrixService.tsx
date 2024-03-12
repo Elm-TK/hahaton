@@ -18,4 +18,8 @@ export default class MatrixService {
         const response = await axios.get<Matrix[]>("https://65742547f941bda3f2af6834.mockapi.io/testAPI")
         return response.data
     }
+
+    static async searchByParams(params: [][]){
+        return new Promise((resolve) => resolve($host.get(`https://65ef34f8ead08fa78a5010e6.mockapi.io/matrix?${params}`)))
+    }
 }

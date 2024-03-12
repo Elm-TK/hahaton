@@ -25,11 +25,27 @@ export default class MatrixStore {
         return [names, isBases]
     }
 
-    async createChangesMatrix(rows: object){
-        return await  MatrixService.changeRowsMatrix(rows)
+    async createChangesMatrix(rows: object) {
+        return await MatrixService.changeRowsMatrix(rows)
     }
 
-    async getAllRows(){
+    async getRowsByParams(params: [][]) {
+        let ids: number[] = []
+        let categories: string[] = []
+        let locations: string[] = []
+        let values: string[] = []
+
+        const response = await MatrixService.searchByParams(params)
+
+        response.data.forEach((option) => {
+            ids.push(option["id"])
+            categories.push(option["category"])
+            locations.push(option["location"])
+            values.push(option["value"])
+        })
+    }
+
+    async getAllRows() {
         return await MatrixService.getAllRows()
     }
 
