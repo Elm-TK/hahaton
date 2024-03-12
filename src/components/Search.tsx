@@ -1,9 +1,9 @@
 import {Autocomplete, TextField} from "@mui/material";
-// import API_Service from "../API/API_Service.ts";
 import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import SearchParamsStore from "../store/SearchParamsStore.tsx";
-// import SearchParamsService from "../service/SearchParamsService.tsx";
+import MatrixStore from "../store/MatrixStore.tsx";
+
 
 const Search = () => {
     // const autocompleteOptions = API_Service.getForSearch()
@@ -12,17 +12,30 @@ const Search = () => {
     const [categories, setCategories] = useState<string[]>([])
     const [locations, setLocations] = useState<string[]>([])
 
-    const searchParams = new SearchParamsStore()
+    const [names, setNames] = useState<string[]>([])
+    const [isBases, setIsBases] = useState<boolean[]>([])
 
-    const fetch = async () => {
+    const searchParams = new SearchParamsStore()
+    const matrixParams = new MatrixStore()
+
+    const fetchParams = async () => {
         const params = await searchParams.getSearchParams()
         setIds(params[0])
         setCategories(params[1])
         setLocations(params[2])
     }
 
+    const fetchQuantityMatrices = async () =>{
+        const quantity = await matrixParams.getQuantityMatrices()
+        console.log(quantity[0])
+        setNames(quantity[0])
+        setIsBases([quantity[1]])
+
+    }
+
     useEffect(() => {
-        fetch()
+        fetchParams()
+        fetchQuantityMatrices()
     }, [])
 
     return (
