@@ -1,5 +1,5 @@
 import {Autocomplete, TextField} from "@mui/material";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import SearchParamsStore from "../store/SearchParamsStore.tsx";
 import MatrixStore from "../store/MatrixStore.tsx";
@@ -29,7 +29,7 @@ const Search = () => {
         console.log('fetchParams')
     }
 
-    const fetchQuantityMatrices = async () =>{
+    const fetchQuantityMatrices = async () => {
         const quantity = await matrixParams.getQuantityMatrices()
         setNames(quantity[0])
         // setIsBases([quantity[1]])
@@ -125,12 +125,14 @@ const Search = () => {
                 }
             />
             <Button variant="contained"
+                    disabled={!isMatrixSelected}
                     style={{
                         width: '100%',
                         backgroundColor: "#00AAFF",
                         color: "#000000"
                     }}
                     onClick={() => {
+                        matrixParams.getRowsByParams([selectedIds, selectedCategories, selectedLocations])
                         console.log(selectedIds, selectedCategories, selectedLocations)
                     }}
             >Найти</Button>

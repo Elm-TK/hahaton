@@ -10,8 +10,8 @@ export default class MatrixStore {
     }
 
     async getQuantityMatrices() {
-        let names: string[] = []
-        let isBases: boolean[] = []
+        const names: string[] = []
+        const isBases: string[] = []
 
         const response = await MatrixService.getQuantity()
 
@@ -29,11 +29,11 @@ export default class MatrixStore {
         return await MatrixService.changeRowsMatrix(rows)
     }
 
-    async getRowsByParams(params: [][]) {
-        let ids: number[] = []
-        let categories: string[] = []
-        let locations: string[] = []
-        let values: string[] = []
+    async getRowsByParams(params:[string[], string[], string[]]) {
+        const ids: number[] = []
+        const categories: string[] = []
+        const locations: string[] = []
+        const values: string[] = []
 
         const response = await MatrixService.searchByParams(params)
 
@@ -43,6 +43,7 @@ export default class MatrixStore {
             locations.push(option["location"])
             values.push(option["value"])
         })
+        return [ids, categories, locations, values]
     }
 
     async getAllRows() {

@@ -19,7 +19,7 @@ export default class MatrixService {
         return response.data
     }
 
-    static async searchByParams(params: [][]){
+    static async searchByParams(params: [string[], string[], string[]]){
         return new Promise((resolve) => resolve($host.get(`https://65ef34f8ead08fa78a5010e6.mockapi.io/matrix?${params}`)))
     }
 }
