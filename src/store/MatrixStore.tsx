@@ -29,7 +29,7 @@ export default class MatrixStore {
         return await MatrixService.changeRowsMatrix(rows)
     }
 
-    async getRowsByParams(params:[string[], string[], string[]]) {
+    async getRowsByParams(params: [string[], string[], string[]]) {
         const ids: number[] = []
         const categories: string[] = []
         const locations: string[] = []

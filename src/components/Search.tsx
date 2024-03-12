@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import SearchParamsStore from "../store/SearchParamsStore.tsx";
 import MatrixStore from "../store/MatrixStore.tsx";
+import Table from "./Table.tsx";
 
 
 const Search = () => {
@@ -24,9 +25,8 @@ const Search = () => {
     const fetchParams = async () => {
         const params = await searchParams.getSearchParams(selectedMatrix)
         setIds(params[0])
-        setCategories(params[1])
-        setLocations(params[2])
-        console.log('fetchParams')
+        setCategories(params[1].sort())
+        setLocations(params[2].sort())
     }
 
     const fetchQuantityMatrices = async () => {
@@ -43,99 +43,101 @@ const Search = () => {
         if (isMatrixSelected) fetchParams()
     }, [selectedMatrix])
 
-    const selectMatrix = (value :string) => {
+    const selectMatrix = (value: string) => {
 
         if (value.length > 0) {
             setIsMatrixSelected(true)
             setSelectedMatrix(value)
-        }
-        else setIsMatrixSelected(false)
+        } else setIsMatrixSelected(false)
     }
 
     return (
-        <div className="min-w-52 mr-5">
-            <Autocomplete
-                noOptionsText={'Такой категории нет'}
-                className="mr-5"
-                options={names}
-                sx={{width: "100%", marginBottom: '15px'}}
-                ListboxProps={{style: {maxHeight: 300}}}
-                onInputChange={(_event: React.SyntheticEvent, value: string) =>
-                    selectMatrix(value)
-                }
-                renderInput={(params) =>
-                    <TextField
-                        {...params}
-                        label="Матрица"
-                    />
-                }
-            />
-            <Autocomplete
-                multiple
-                disabled={!isMatrixSelected}
-                noOptionsText={'Такой категории нет'}
-                className="mr-5"
-                options={ids}
-                sx={{width: "100%", marginBottom: '15px'}}
-                ListboxProps={{style: {maxHeight: 300}}}
-                onChange={(_event, values)=> {
-                    setSelectedIds(values)
-                }}
-                renderInput={(params) =>
-                    <TextField
-                        {...params}
-                        label="ID строки"
-                    />
-                }
-            />
-            <Autocomplete
-                multiple
-                disabled={!isMatrixSelected}
-                noOptionsText={'Такой категории нет'}
-                className="mr-5"
-                options={categories}
-                sx={{width: "100%", marginBottom: '15px'}}
-                ListboxProps={{style: {maxHeight: 300}}}
-                onChange={(_event, values)=> {
-                    setSelectedCategories(values)
-                }}
-                renderInput={(params) =>
-                    <TextField
-                        {...params}
-                        label="Категория"
-                    />
-                }
-            />
-            <Autocomplete
-                multiple
-                disabled={!isMatrixSelected}
-                noOptionsText={'Такой категории нет'}
-                className="mr-5"
-                options={locations}
-                sx={{width: "100%", marginBottom: '15px'}}
-                ListboxProps={{style: {maxHeight: 300}}}
-                onChange={(_event, values)=> {
-                    setSelectedLocations(values)
-                }}
-                renderInput={(params) =>
-                    <TextField
-                        {...params}
-                        label="Локация"
-                    />
-                }
-            />
-            <Button variant="contained"
+        <div className="flex">
+            <div className="min-w-52 mr-5">
+                <Autocomplete
+                    noOptionsText={'Такой категории нет'}
+                    className="mr-5"
+                    options={names}
+                    sx={{width: "100%", marginBottom: '15px'}}
+                    ListboxProps={{style: {maxHeight: 300}}}
+                    onInputChange={(_event: React.SyntheticEvent, value: string) =>
+                        selectMatrix(value)
+                    }
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            label="Матрица"
+                        />
+                    }
+                />
+                <Autocomplete
+                    multiple
                     disabled={!isMatrixSelected}
-                    style={{
-                        width: '100%',
-                        backgroundColor: "#00AAFF",
-                        color: "#000000"
+                    noOptionsText={'Такой категории нет'}
+                    className="mr-5"
+                    options={ids}
+                    sx={{width: "100%", marginBottom: '15px'}}
+                    ListboxProps={{style: {maxHeight: 300}}}
+                    onChange={(_event, values) => {
+                        setSelectedIds(values)
                     }}
-                    onClick={() => {
-                        matrixParams.getRowsByParams([selectedIds, selectedCategories, selectedLocations])
-                        console.log(selectedIds, selectedCategories, selectedLocations)
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            label="ID строки"
+                        />
+                    }
+                />
+                <Autocomplete
+                    multiple
+                    disabled={!isMatrixSelected}
+                    noOptionsText={'Такой категории нет'}
+                    className="mr-5"
+                    options={categories}
+                    sx={{width: "100%", marginBottom: '15px'}}
+                    ListboxProps={{style: {maxHeight: 300}}}
+                    onChange={(_event, values) => {
+                        setSelectedCategories(values)
                     }}
-            >Найти</Button>
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            label="Категория"
+                        />
+                    }
+                />
+                <Autocomplete
+                    multiple
+                    disabled={!isMatrixSelected}
+                    noOptionsText={'Такой категории нет'}
+                    className="mr-5"
+                    options={locations}
+                    sx={{width: "100%", marginBottom: '15px'}}
+                    ListboxProps={{style: {maxHeight: 300}}}
+                    onChange={(_event, values) => {
+                        setSelectedLocations(values)
+                    }}
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            label="Локация"
+                        />
+                    }
+                />
+                <Button variant="contained"
+                        disabled={!isMatrixSelected}
+                        style={{
+                            width: '100%',
+                            backgroundColor: "#00AAFF",
+                            color: "#000000"
+                        }}
+                        onClick={() => {
+                            matrixParams.getRowsByParams([selectedIds, selectedCategories, selectedLocations])
+                            console.log(selectedMatrix, selectedIds, selectedCategories, selectedLocations)
+                        }}
+                >Найти</Button>
+            </div>
+            <>{isMatrixSelected ? <Table matrixName={selectedMatrix} categories={categories} locations={locations}/> : <span>fail</span>}</>;
         </div>
     );
 };

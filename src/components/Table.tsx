@@ -23,6 +23,7 @@ import {
 import {Matrix} from "../types/Matrix.tsx";
 import {useEffect, useState} from "react";
 import MatrixStore from "../store/MatrixStore.tsx";
+import {c} from "vite/dist/node/types.d-AKzkD8vd";
 
 
 interface EditToolbarProps {
@@ -32,40 +33,48 @@ interface EditToolbarProps {
     ) => void;
 }
 
+export type TableProps = {
+    matrixName: string,
+    categories: string[],
+    locations: string[],
+}
 
-export default function Table() {
+
+export default function Table(props: TableProps) {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rows, setRows] = useState<Matrix[]>([])
 
-
-    const [changes, setChanges] = useState<object>({})
+    // const [changes, setChanges] = useState<Map<number, string[]>>(new Map<number, string[]>)
+    const [newRows, setNewRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
+    const [deletedRows, setDeletedRows] = useState<number[]>([])
+    const [updatedRows, setUpdatedRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
+    const [maxId, setMaxId] = useState<number>(0)
 
 
     const matrixStore = new MatrixStore()
 
-    const putChangesMatix = async () => {
-        await matrixStore.createChangesMatrix(changes)
-    }
+    // const putChangesMatix = async () => {
+    //     await matrixStore.createChangesMatrix(changes)
+    // }
 
     let initialRows: GridRowsProp = [];
 
 
     async function fetch() {
-        const res =  await matrixStore.getAllRows()
-
+        const res = await matrixStore.getAllRows()
         setRows(res)
 
+        setMaxId(res.length)
         initialRows = [rows]
-
-
     }
 
     function EditToolbar(props: EditToolbarProps) {
         const {setRows, setRowModesModel} = props;
 
         const handleClick = () => {
-            const id = Number(rows[rows.length - 1].id) + 1;
-
+            const id = Number(maxId + 1);
+            setNewRows(newRows.set(id, []))
+            setMaxId(maxId + 1)
             setRows((oldRows) => [...oldRows, {id, name: '', email: '', isNew: true}]);
             setRowModesModel((oldModel) => ({
                 ...oldModel,
@@ -100,17 +109,21 @@ export default function Table() {
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({...rowModesModel, [id]: {mode: GridRowModes.View}});
-        // setChanges({
-        //     "name": "название",
-        //     "updates": [
-        //         {
-        //
-        //         }
-        //     ]
-        // })
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
+        if (newRows.get(Number(id))) {
+            const nr = newRows
+            nr.delete(Number(id))
+            setNewRows(nr)
+        }
+            newRows.delete(Number(id))
+        if (updatedRows.get(Number(id))) {
+            const ur = updatedRows
+            ur.delete(Number(id))
+            setUpdatedRows(ur)
+            setDeletedRows([...deletedRows, Number(id)])
+        }
         setRows(rows.filter((row) => row.id !== id));
     };
 
@@ -127,9 +140,15 @@ export default function Table() {
     };
 
     const processRowUpdate = (newRow: GridRowModel) => {
-        const updatedRow = {...newRow, isNew: false};
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
+        if (newRow.category && newRow.location && newRow.value) {
+            if (newRows.get(newRow.id))
+                setNewRows(newRows.set(newRow.id, [newRow.category, newRow.location, newRow.value]))
+            else
+                setUpdatedRows(updatedRows.set(Number(newRow.id), [newRow.category, newRow.location, newRow.value]))
+            const updatedRow = {...newRow, isNew: false};
+            setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+            return updatedRow;
+        }
     };
 
     const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
@@ -147,21 +166,21 @@ export default function Table() {
             field: 'category',
             headerName: 'Категория',
             width: 300,
-            align: 'left',
-            headerAlign: 'left',
             editable: true,
+            type: 'singleSelect',
+            valueOptions: props.categories,
         },
         {
             field: 'location',
             headerName: 'Локация',
             width: 300,
             editable: true,
+            type: 'singleSelect',
+            valueOptions: props.locations,
         },
         {
             field: 'value',
             headerName: 'Цена',
-            align: 'left',
-            headerAlign: 'left',
             width: 120,
             type: 'number',
             editable: true,
@@ -213,36 +232,42 @@ export default function Table() {
             },
         },
     ];
-
+    // console.log('newRows', newRows)
+    // console.log('updatedRows', updatedRows)
+    // console.log('deletedRows', deletedRows)
     return (
-        <Box
-            sx={{
-                height: '700px',
-                width: '100%',
-                '& .actions': {
-                    color: 'text.secondary',
-                },
-                '& .textPrimary': {
-                    color: 'text.primary',
-                },
-            }}
-        >
-            <DataGrid
-                localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
-                rows={rows}
-                columns={columns}
-                editMode="row"
-                rowModesModel={rowModesModel}
-                onRowModesModelChange={handleRowModesModelChange}
-                onRowEditStop={handleRowEditStop}
-                processRowUpdate={processRowUpdate}
-                slots={{
-                    toolbar: EditToolbar,
+        <>
+            <Box
+                sx={{
+                    height: '700px',
+                    width: '100%',
+                    '& .actions': {
+                        color: 'text.secondary',
+                    },
+                    '& .textPrimary': {
+                        color: 'text.primary',
+                    },
                 }}
-                slotProps={{
-                    toolbar: {setRows, setRowModesModel},
-                }}
-            />
-        </Box>
+            >
+                <DataGrid
+                    localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+                    checkboxSelection
+                    rows={rows}
+                    columns={columns}
+                    editMode="row"
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    slots={{
+                        toolbar: EditToolbar,
+                    }}
+                    slotProps={{
+                        toolbar: {setRows, setRowModesModel},
+                    }}
+                />
+            </Box>
+            <Button variant="contained" onClick={() => console.log(props.matrixName, newRows, updatedRows, deletedRows)}>Пуск</Button>
+        </>
     );
 }
