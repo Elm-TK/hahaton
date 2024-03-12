@@ -1,4 +1,4 @@
-import {Autocomplete, TextField} from "@mui/material";
+import {Autocomplete, CircularProgress, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import SearchParamsStore from "../store/SearchParamsStore.tsx";
@@ -137,7 +137,7 @@ const Search = () => {
                         }}
                 >Найти</Button>
             </div>
-            <>{isMatrixSelected ? <Table matrixName={selectedMatrix} categories={categories} locations={locations}/> : <span>fail</span>}</>;
+            <>{isMatrixSelected ? <Table matrixName={selectedMatrix} categories={categories} locations={locations}/> : <CircularProgress />}</>
         </div>
     );
 };

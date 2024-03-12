@@ -49,6 +49,7 @@ export default function Table(props: TableProps) {
     const [deletedRows, setDeletedRows] = useState<number[]>([])
     const [updatedRows, setUpdatedRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
     const [maxId, setMaxId] = useState<number>(0)
+    const [selectedRows, setSelectedRows] = useState<number[]>([])
 
 
     const matrixStore = new MatrixStore()
@@ -57,15 +58,10 @@ export default function Table(props: TableProps) {
     //     await matrixStore.createChangesMatrix(changes)
     // }
 
-    let initialRows: GridRowsProp = [];
-
-
     async function fetch() {
         const res = await matrixStore.getAllRows()
         setRows(res)
-
         setMaxId(res.length)
-        initialRows = [rows]
     }
 
     function EditToolbar(props: EditToolbarProps) {
@@ -79,8 +75,8 @@ export default function Table(props: TableProps) {
             setRowModesModel((oldModel) => ({
                 ...oldModel,
                 [id]: {mode: GridRowModes.Edit, fieldToFocus: 'name'},
-            }));
-        };
+            }))
+        }
 
         return (
             <GridToolbarContainer>
@@ -117,7 +113,7 @@ export default function Table(props: TableProps) {
             nr.delete(Number(id))
             setNewRows(nr)
         }
-            newRows.delete(Number(id))
+        newRows.delete(Number(id))
         if (updatedRows.get(Number(id))) {
             const ur = updatedRows
             ur.delete(Number(id))
@@ -265,9 +261,13 @@ export default function Table(props: TableProps) {
                     slotProps={{
                         toolbar: {setRows, setRowModesModel},
                     }}
+                    onRowSelectionModelChange={(ids) => {
+                        setSelectedRows(ids.map(string => +string))
+                    }}
                 />
             </Box>
-            <Button variant="contained" onClick={() => console.log(props.matrixName, newRows, updatedRows, deletedRows)}>Пуск</Button>
+            <Button variant="contained"
+                    onClick={() => console.log(props.matrixName, newRows, updatedRows, deletedRows)}>Пуск</Button>
         </>
     );
 }
