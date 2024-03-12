@@ -29,6 +29,10 @@ export default class MatrixStore {
         return await  MatrixService.changeRowsMatrix(rows)
     }
 
+    async getAllRows(){
+        return await MatrixService.getAllRows()
+    }
+
     setMatricesParams(names: string[], isBases: boolean[]) {
         this._Names = names
         this._IsBase = isBases

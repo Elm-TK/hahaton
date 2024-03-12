@@ -1,4 +1,6 @@
 import {$host} from "../http";
+import axios from "axios";
+import {Matrix} from "../types/Matrix.tsx";
 
 
 export default class MatrixService {
@@ -10,5 +12,10 @@ export default class MatrixService {
 
     static async changeRowsMatrix(rows: object){
         return new Promise((resolve) => resolve($host.put("https://65ef34f8ead08fa78a5010e6.mockapi.io/matrix", {rows})))
+    }
+
+    static async getAllRows(){
+        const response = await axios.get<Matrix[]>("https://65742547f941bda3f2af6834.mockapi.io/testAPI")
+        return response.data
     }
 }

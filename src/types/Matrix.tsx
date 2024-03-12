@@ -1,4 +1,4 @@
-export type User = {
+export type Matrix = {
     id: number[];
     category: string[];
     location: string[];

@@ -20,7 +20,7 @@ import {
     GridRowEditStopReasons, ruRU,
 } from '@mui/x-data-grid';
 
-import {User} from "../types/Matrix.tsx";
+import {Matrix} from "../types/Matrix.tsx";
 import {useEffect, useState} from "react";
 import API_Service from "../API/API_Service.ts";
 import MatrixStore from "../store/MatrixStore.tsx";
@@ -36,23 +36,23 @@ interface EditToolbarProps {
 
 export default function Table() {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-    const [rows, setRows] = useState<User[]>([])
+    const [rows, setRows] = useState<Matrix[]>([])
 
 
     const [changes, setChanges] = useState<object>({})
 
 
-    const changesMatrix = new MatrixStore()
+    const matrixStore = new MatrixStore()
 
     const putChangesMatix = async () => {
-        await changesMatrix.createChangesMatrix(changes)
+        await matrixStore.createChangesMatrix(changes)
     }
 
     let initialRows: GridRowsProp = [];
 
 
     async function fetch() {
-        const res =  await API_Service.getAll()
+        const res =  await matrixStore.getAllRows()
 
         setRows(res)
 
