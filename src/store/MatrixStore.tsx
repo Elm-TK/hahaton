@@ -25,6 +25,9 @@ export default class MatrixStore {
         return [names, isBases]
     }
 
+    async createChangesMatrix(rows: object){
+        return await  MatrixService.changeRowsMatrix(rows)
+    }
 
     setMatricesParams(names: string[], isBases: boolean[]) {
         this._Names = names

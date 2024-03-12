@@ -23,6 +23,7 @@ import {
 import {User} from "../types/Matrix.tsx";
 import {useEffect, useState} from "react";
 import API_Service from "../API/API_Service.ts";
+import MatrixStore from "../store/MatrixStore.tsx";
 
 
 interface EditToolbarProps {
@@ -37,6 +38,15 @@ export default function Table() {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rows, setRows] = useState<User[]>([])
 
+
+    const [changes, setChanges] = useState<object>({})
+
+
+    const changesMatrix = new MatrixStore()
+
+    const putChangesMatix = async () => {
+        await changesMatrix.createChangesMatrix(changes)
+    }
 
     let initialRows: GridRowsProp = [];
 
@@ -56,9 +66,6 @@ export default function Table() {
 
         const handleClick = () => {
             const id = Number(rows[rows.length - 1].id) + 1;
-
-            console.log(id)
-
 
             setRows((oldRows) => [...oldRows, {id, name: '', email: '', isNew: true}]);
             setRowModesModel((oldModel) => ({
@@ -94,6 +101,14 @@ export default function Table() {
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({...rowModesModel, [id]: {mode: GridRowModes.View}});
+        // setChanges({
+        //     "name": "название",
+        //     "updates": [
+        //         {
+        //
+        //         }
+        //     ]
+        // })
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {

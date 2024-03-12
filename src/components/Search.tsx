@@ -27,10 +27,8 @@ const Search = () => {
 
     const fetchQuantityMatrices = async () =>{
         const quantity = await matrixParams.getQuantityMatrices()
-        console.log(quantity[0])
         setNames(quantity[0])
         setIsBases([quantity[1]])
-
     }
 
     useEffect(() => {
