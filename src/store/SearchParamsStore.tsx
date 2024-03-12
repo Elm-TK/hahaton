@@ -1,7 +1,7 @@
 import SearchParamsService from "../service/SearchParamsService.tsx";
 
 export default class SearchParamsStore {
-    private _Ids: number[];
+    private _Ids: string[];
     private _Categories: string[];
     private _Locations: string[];
 
@@ -12,12 +12,12 @@ export default class SearchParamsStore {
     }
 
 
-    async getSearchParams() {
-        let ids: number[] = []
-        let categories: string[] = []
-        let locations: string[] = []
+    async getSearchParams(selectedMatrix: string) {
+        const ids: string[] = []
+        const categories: string[] = []
+        const locations: string[] = []
 
-        const response = await SearchParamsService.getForSearch()
+        const response = await SearchParamsService.getForSearch(selectedMatrix)
         response.data.forEach((option) => {
             ids.push(option["id"])
             categories.push(option["category"])
@@ -29,7 +29,7 @@ export default class SearchParamsStore {
     }
 
 
-    setSearchParams(ids: number[], categories: string[], locations: string[]) {
+    setSearchParams(ids: string[], categories: string[], locations: string[]) {
         this._Ids = ids
         this._Categories = categories
         this._Locations = locations
