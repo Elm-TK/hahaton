@@ -4,13 +4,13 @@ export default class SearchParamsStore {
     private _Ids: string[];
     private _Categories: string[];
     private _Locations: string[];
+    private _
 
     constructor() {
         this._Ids = []
         this._Categories = []
         this._Locations = []
     }
-
 
     async getSearchParams(selectedMatrix: string) {
         const ids: string[] = []

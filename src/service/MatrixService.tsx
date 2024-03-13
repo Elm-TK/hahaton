@@ -19,9 +19,7 @@ export default class MatrixService {
         return response.data
     }
 
-    static async searchByParams(params: string) {
-        return new Promise((resolve) => resolve($host.post(`api/matrix/get`, {params})))
+    static async searchByParams(nameMatrix: string, categories: string[], locations: string[]) {
+        return new Promise((resolve) => resolve($host.post(`api/matrix/get`, {nameMatrix, categories, locations})))
     }
-
-
 }
