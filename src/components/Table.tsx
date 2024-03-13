@@ -54,9 +54,9 @@ export default function Table(props: TableProps) {
 
     const matrixStore = new MatrixStore()
 
-    // const putChangesMatix = async () => {
-    //     await matrixStore.createChangesMatrix(changes)
-    // }
+    const putChangesMatix = async () => {
+        await matrixStore.createChangesMatrix(props.matrixName, updatedRows, newRows, deletedRows)
+    }
 
     async function fetch() {
         const res = await matrixStore.getAllRows()
@@ -266,8 +266,7 @@ export default function Table(props: TableProps) {
                     }}
                 />
             </Box>
-            <Button variant="contained"
-                    onClick={() => console.log(props.matrixName, newRows, updatedRows, deletedRows)}>Пуск</Button>
+            <Button variant="contained" onClick={() => putChangesMatix()}>Пуск</Button>
         </>
     );
 }

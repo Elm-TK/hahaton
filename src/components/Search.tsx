@@ -8,7 +8,7 @@ import Table from "./Table.tsx";
 
 const Search = () => {
     const [selectedMatrix, setSelectedMatrix] = useState<string>('')
-    const [isMatrixSelected, setIsMatrixSelected] = useState(false)
+    const [isMatrixSelected, setIsMatrixSelected] = useState(true)
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [selectedLocations, setSelectedLocations] = useState<string[]>([])
@@ -55,7 +55,7 @@ const Search = () => {
         <div className="flex">
             <div className="min-w-52 mr-5">
                 <Autocomplete
-                    noOptionsText={'Такой категории нет'}
+                    noOptionsText={'Такой матрицы нет'}
                     className="mr-5"
                     options={names}
                     sx={{width: "100%", marginBottom: '15px'}}
@@ -73,7 +73,7 @@ const Search = () => {
                 <Autocomplete
                     multiple
                     disabled={!isMatrixSelected}
-                    noOptionsText={'Такой категории нет'}
+                    noOptionsText={'Такого ID нет'}
                     className="mr-5"
                     options={ids}
                     sx={{width: "100%", marginBottom: '15px'}}
@@ -109,7 +109,7 @@ const Search = () => {
                 <Autocomplete
                     multiple
                     disabled={!isMatrixSelected}
-                    noOptionsText={'Такой категории нет'}
+                    noOptionsText={'Такой локации нет'}
                     className="mr-5"
                     options={locations}
                     sx={{width: "100%", marginBottom: '15px'}}
@@ -132,8 +132,7 @@ const Search = () => {
                             color: "#000000"
                         }}
                         onClick={() => {
-                            matrixParams.getRowsByParams([selectedIds, selectedCategories, selectedLocations])
-                            console.log(selectedMatrix, selectedIds, selectedCategories, selectedLocations)
+                            matrixParams.getRowsByParams([selectedMatrix, selectedIds.map(string => +string), selectedCategories, selectedLocations])
                         }}
                 >Найти</Button>
             </div>
