@@ -10,7 +10,7 @@ export default class MatrixService {
     }
 
     static async changeRowsMatrix(name: string, updates: Update[], create: Create[], del: number[]) {
-        return new Promise((resolve) => resolve($host.put("api/baseline/update", {name, updates, create, del})))
+        return new Promise((resolve) => resolve($host.put("api/matrix/update", {name, updates, create, del})))
     }
 
     static async searchByParams(nameMatrix: string, categories: string[], locations: string[]) {
