@@ -15,14 +15,19 @@ const Search = () => {
     const [locations, setLocations] = useState<string[]>([])
     const [reqRows, setReqRows] = useState<SearchParams[]>([])
     const [names, setNames] = useState<string[]>([])
+    const [loces, setLoces] = useState<string[]>([])
 
     const matrixParams = new MatrixStore()
 
 
     const sendSearchParams = async () => {
-       const response = await  matrixParams.getRowsByParams([selectedMatrix, selectedCategories, selectedLocations])
-        console.log(response)
+        const lcs: string[] = []
+        const response = await matrixParams.getRowsByParams([selectedMatrix, selectedCategories, selectedLocations])
+        response.map((obj) => {
+            lcs.push(obj.location)
+        })
         setReqRows(response)
+        setLoces(lcs)
     }
 
     const fetchQuantityMatrices = async () => {
@@ -145,7 +150,8 @@ const Search = () => {
                 >Найти</Button>
             </div>
             <>{(isMatrixSelected && reqRows.length > 0) ?
-                <Table matrixName={selectedMatrix} categories={categories} locations={locations} rows={reqRows}/> :
+                <Table matrixName={selectedMatrix} categories={categories} locations={loces}
+                       rows={reqRows}/> :
                 <CircularProgress/>}</>
         </div>
     );

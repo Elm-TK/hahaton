@@ -1,6 +1,5 @@
 import {$host} from "../http";
-import axios from "axios";
-import {Matrix} from "../types/Matrix.tsx";
+import {Create, Update} from "../store/MatrixStore.tsx";
 
 
 export default class MatrixService {
@@ -10,13 +9,8 @@ export default class MatrixService {
         return new Promise((resolve) => resolve($host.get("api/main/generateClient")))
     }
 
-    static async changeRowsMatrix(changes: string) {
-        return new Promise((resolve) => resolve($host.put("https://65ef34f8ead08fa78a5010e6.mockapi.io/matrix", {changes})))
-    }
-
-    static async getAllRows() {
-        const response = await axios.get<Matrix[]>("https://65742547f941bda3f2af6834.mockapi.io/testAPI")
-        return response.data
+    static async changeRowsMatrix(name: string, updates: Update[], create: Create[], del: number[]) {
+        return new Promise((resolve) => resolve($host.put("api/baseline/update", {name, updates, create, del})))
     }
 
     static async searchByParams(nameMatrix: string, categories: string[], locations: string[]) {

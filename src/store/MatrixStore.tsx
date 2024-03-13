@@ -40,7 +40,7 @@ export class SearchParams {
     }
 }
 
-class Update {
+export class Update {
     id: number;
     category: string | undefined;
     location: string | undefined;
@@ -55,7 +55,7 @@ class Update {
     }
 }
 
-class Create {
+export class Create {
     category: string;
     location: string;
     price: number;
@@ -122,17 +122,14 @@ export default class MatrixStore {
             crts.push(create)
         })
 
-        const changes: { name: string, updates: Update[], create: Create[], del: number[] } = {
-            "name": name,
-            "updates": upds,
-            "create": crts,
-            "del": del,
-        }
+        // const changes: { name: string, updates: Update[], create: Create[], del: number[] } = {
+        //     "name": name,
+        //     "updates": upds,
+        //     "create": crts,
+        //     "del": del,
+        // }
 
-        let json = JSON.stringify(changes)
-
-        console.log(json)
-        return await MatrixService.changeRowsMatrix(json)
+        return await MatrixService.changeRowsMatrix(name, upds, crts, del)
     }
 
     async getRowsByParams(params: [string, string[], string[]]) {
@@ -143,8 +140,6 @@ export default class MatrixStore {
             "categories": params[1],
             "locations": params[2]
         }
-
-        let json = JSON.stringify(parametrs)
 
 
         const response = await MatrixService.searchByParams(params[0], params[1], params[2])
@@ -157,9 +152,6 @@ export default class MatrixStore {
         return rows
     }
 
-    async getAllRows() {
-        return await MatrixService.getAllRows()
-    }
 
     setMatricesParams(names: string[], isBases: boolean[]) {
         this._Names = names
