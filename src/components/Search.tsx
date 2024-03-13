@@ -16,6 +16,7 @@ const Search = () => {
     const [reqRows, setReqRows] = useState<SearchParams[]>([])
     const [names, setNames] = useState<string[]>([])
     const [loces, setLoces] = useState<string[]>([])
+    const [tableActive, setTableActive] = useState<boolean>(false)
 
     const matrixParams = new MatrixStore()
 
@@ -28,6 +29,7 @@ const Search = () => {
         })
         setReqRows(response)
         setLoces(lcs)
+        setTableActive(true)
     }
 
     const fetchQuantityMatrices = async () => {
@@ -38,25 +40,16 @@ const Search = () => {
         quantity[0].map((bases: Baseline) => {
             baselinesNames.push(bases.name)
         })
-
-
         cats = quantity[3]
         loces = quantity[4]
-
-
         setNames(baselinesNames)
         setCategories(cats)
         setLocations(loces)
-        // setIsBases([quantity[1]])
     }
 
     useEffect(() => {
         fetchQuantityMatrices()
     }, [])
-
-    // useEffect(() => {
-    //     if (isMatrixSelected) fetchParams()
-    // }, [selectedMatrix])
 
     const selectMatrix = (value: string) => {
 
@@ -72,11 +65,13 @@ const Search = () => {
                 <Autocomplete
                     noOptionsText={'Такой матрицы нет'}
                     className="mr-5"
-                    options={names}
+                    options={names.sort()}
                     sx={{width: "100%", marginBottom: '15px'}}
                     ListboxProps={{style: {maxHeight: 300}}}
-                    onInputChange={(_event: React.SyntheticEvent, value: string) =>
+                    onInputChange={(_event: React.SyntheticEvent, value: string) => {
                         selectMatrix(value)
+                        setTableActive(false)
+                    }
                     }
                     renderInput={(params) =>
                         <TextField
@@ -85,34 +80,17 @@ const Search = () => {
                         />
                     }
                 />
-                {/*<Autocomplete*/}
-                {/*    multiple*/}
-                {/*    disabled={!isMatrixSelected}*/}
-                {/*    noOptionsText={'Такого ID нет'}*/}
-                {/*    className="mr-5"*/}
-                {/*    options={ids}*/}
-                {/*    sx={{width: "100%", marginBottom: '15px'}}*/}
-                {/*    ListboxProps={{style: {maxHeight: 300}}}*/}
-                {/*    onChange={(_event, values) => {*/}
-                {/*        setSelectedIds(values)*/}
-                {/*    }}*/}
-                {/*    renderInput={(params) =>*/}
-                {/*        <TextField*/}
-                {/*            {...params}*/}
-                {/*            label="ID строки"*/}
-                {/*        />*/}
-                {/*    }*/}
-                {/*/>*/}
                 <Autocomplete
                     multiple
                     disabled={!isMatrixSelected}
                     noOptionsText={'Такой категории нет'}
                     className="mr-5"
-                    options={categories}
+                    options={categories.sort()}
                     sx={{width: "100%", marginBottom: '15px'}}
                     ListboxProps={{style: {maxHeight: 300}}}
                     onChange={(_event, values) => {
                         setSelectedCategories(values)
+                        setTableActive(false)
                     }}
                     renderInput={(params) =>
                         <TextField
@@ -126,11 +104,12 @@ const Search = () => {
                     disabled={!isMatrixSelected}
                     noOptionsText={'Такой локации нет'}
                     className="mr-5"
-                    options={locations}
+                    options={locations.sort()}
                     sx={{width: "100%", marginBottom: '15px'}}
                     ListboxProps={{style: {maxHeight: 300}}}
                     onChange={(_event, values) => {
                         setSelectedLocations(values)
+                        setTableActive(false)
                     }}
                     renderInput={(params) =>
                         <TextField
@@ -149,12 +128,11 @@ const Search = () => {
                         onClick={() => sendSearchParams()}
                 >Найти</Button>
             </div>
-            <>{(isMatrixSelected && reqRows.length > 0) ?
+            <>{tableActive ?
                 <Table matrixName={selectedMatrix} categories={categories} locations={loces}
                        rows={reqRows}/> :
                 <CircularProgress/>}</>
         </div>
     );
 };
-// categories={categories} locations={locations} prices={prices}
 export default Search;

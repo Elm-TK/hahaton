@@ -35,17 +35,6 @@ export default function Segments() {
 
     const [selectedMatrix, setSelectedMatrix] = useState<Baseline>({} as Baseline)
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const matrix = selectedMatrix
-        setBases(bases.map((b) => {
-            const nb = b
-            nb.active = false
-            return nb
-        }))
-        matrix.active = !matrix.active
-        setSelectedMatrix(matrix)
-    };
-
     const matrixParams = new MatrixStore()
 
     const fetchQuantityMatrices = async () => {
@@ -245,7 +234,7 @@ export default function Segments() {
                         toolbar: {setRows, setRowModesModel},
                     }}
                     onRowSelectionModelChange={(ids) => {
-                        setSelectedRows(ids.map(string => +string))
+                        setSelectedRows(ids as number[])
                     }}
                 />
             </Box>

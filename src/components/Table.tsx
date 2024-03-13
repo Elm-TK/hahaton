@@ -104,16 +104,12 @@ export default function Table(props: TableProps) {
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
-        console.log(id, "------", newRows)
         if (newRows.get(Number(id))) {
-            console.log(id, "нашлась в новых")
             const nr = newRows
             nr.delete(Number(id))
             setNewRows(nr)
         } else setDeletedRows([...deletedRows, Number(id)])
-        newRows.delete(Number(id))
         if (updatedRows.get(Number(id))) {
-            console.log(id, "нашлась в изменённых")
             const ur = updatedRows
             ur.delete(Number(id))
             setUpdatedRows(ur)
@@ -134,7 +130,7 @@ export default function Table(props: TableProps) {
     };
 
     const processRowUpdate = (newRow: GridRowModel) => {
-        if (newRow.category && newRow.location && newRow.value) {
+        if ((newRow.category && newRow.location && newRow.value)) {
             if (newRows.get(newRow.id))
                 setNewRows(newRows.set(newRow.id, [newRow.category, newRow.location, newRow.value]))
             else

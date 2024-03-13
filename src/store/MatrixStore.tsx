@@ -124,7 +124,6 @@ export default class MatrixStore {
             }
         })
 
-
         return await MatrixService.changeRowsMatrix(name, upds, crts, del)
     }
 
