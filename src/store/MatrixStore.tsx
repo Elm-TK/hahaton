@@ -27,18 +27,16 @@ export class Discount {
 }
 
 export class SearchParams {
-    id?: number;
-    category?: string;
-    location?: string;
-    value?: number;
-    isNew? :boolean
+    id: number;
+    category: string;
+    location: string;
+    value: number;
 
-    constructor(id: number | undefined, category: string | undefined, location: string | undefined, price: number | undefined, isNew: boolean | undefined) {
+    constructor(id: number, category: string, location: string, price: number) {
         this.id = id
         this.category = category
         this.location = location
         this.value = price
-        this.isNew = isNew
     }
 }
 
@@ -83,7 +81,7 @@ export default class MatrixStore {
         const discounts: Discount[] = []
         let unused_segments: number[] = []
         let cates: string[] = []
-        let loces: string[] =[]
+        let loces: string[] = []
         const names: string[] = []
         const isBases: boolean[] = []
 
@@ -149,10 +147,9 @@ export default class MatrixStore {
         let json = JSON.stringify(parametrs)
 
 
-
         const response = await MatrixService.searchByParams(params[0], params[1], params[2])
         response.data.forEach((obj: SearchParams) => {
-            const params = new SearchParams(obj.id, obj.category, obj.location, obj.price)
+            const params = new SearchParams(obj.id, obj.category, obj.location, obj.value)
             rows.push(params)
         })
 

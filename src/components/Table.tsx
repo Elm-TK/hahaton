@@ -20,7 +20,7 @@ import {
     GridRowEditStopReasons, ruRU,
 } from '@mui/x-data-grid';
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import MatrixStore, {SearchParams} from "../store/MatrixStore.tsx";
 
 
@@ -46,17 +46,19 @@ export default function Table(props: TableProps) {
     const [newRows, setNewRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
     const [deletedRows, setDeletedRows] = useState<number[]>([])
     const [updatedRows, setUpdatedRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
-    const [maxId, setMaxId] = useState<number>(props.rows.length)
+    const [maxId, setMaxId] = useState<number>(0)
     const [selectedRows, setSelectedRows] = useState<number[]>([])
 
 
-    if (rows != props.rows) {
-        setRows(props.rows)
-    }
+    useEffect(() =>{
+        if (rows != props.rows) {
+            setRows(props.rows)
+        }
 
-    if (maxId != props.rows.length) {
-        setMaxId(props.rows.length)
-    }
+        if (maxId != props.rows.length) {
+            setMaxId(props.rows[rows.length-1].id)
+        }
+    },[])
 
     const matrixStore = new MatrixStore()
 
@@ -69,6 +71,7 @@ export default function Table(props: TableProps) {
 
         const handleClick = () => {
             const id = Number(maxId + 1);
+            console.log(maxId,'----' )
             setNewRows(newRows.set(id, []))
             setMaxId(maxId + 1)
             setRows((oldRows) => [...oldRows, {id, name: '', email: '', isNew: true}]);
@@ -103,6 +106,7 @@ export default function Table(props: TableProps) {
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
+        console.log(id, "------", newRows)
         if (newRows.get(Number(id))) {
             const nr = newRows
             nr.delete(Number(id))
@@ -162,7 +166,7 @@ export default function Table(props: TableProps) {
             width: 250,
             editable: true,
             type: 'singleSelect',
-            valueOptions: props.categories,
+            valueOptions: [... new Set(props.categories)],
         },
         {
             field: 'location',
@@ -170,7 +174,7 @@ export default function Table(props: TableProps) {
             width: 250,
             editable: true,
             type: 'singleSelect',
-            valueOptions: props.locations,
+            valueOptions: [... new Set(props.locations)],
         },
         {
             field: 'value',
@@ -229,6 +233,7 @@ export default function Table(props: TableProps) {
     // console.log('newRows', newRows)
     // console.log('updatedRows', updatedRows)
     // console.log('deletedRows', deletedRows)
+    console.log(selectedRows)
     return (
         <>
             <Box
