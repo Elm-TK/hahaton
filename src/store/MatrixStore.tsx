@@ -83,19 +83,19 @@ export default class MatrixStore {
         const names: string[] = []
         const isBases: boolean[] = []
 
-        const response = await MatrixService.getQuantity()
-
-        response.data.baseline.forEach((obj: Baseline) => {
-            const base = new Baseline(obj["id"], obj["name"], obj["active"])
+        const response = (await MatrixService.getQuantity()).data
+        response.baselines.forEach((obj: Baseline) => {
+            const base = new Baseline(obj.id, obj.name, obj.active)
             bases.push(base)
         })
+        response.discounts.forEach((obj: Discount) => {
 
-        response.data.discounts.forEach((obj: Discount) => {
             const discount = new Discount(obj["id"], obj["name"], obj["active"], obj["segment"])
             discounts.push(discount)
+
         })
 
-        unused_segments = response.data.unused_segments
+        unused_segments = response.unused_segments
 
         this.setMatricesParams(names, isBases)
 

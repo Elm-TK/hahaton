@@ -7,7 +7,7 @@ export default class MatrixService {
 
     // получение названия всех матриц и для каждой true/false бейз матрица или нет
     static async getQuantity() {
-        return new Promise((resolve) => resolve($host.get("https://65ef34f8ead08fa78a5010e6.mockapi.io/matrix")))
+        return new Promise((resolve) => resolve($host.get("api/main/generateClient")))
     }
 
     static async changeRowsMatrix(changes: string) {
@@ -20,7 +20,7 @@ export default class MatrixService {
     }
 
     static async searchByParams(params: string) {
-        return new Promise((resolve) => resolve($host.post(`https://65ef34f8ead08fa78a5010e6.mockapi.io/matrix`, {params})))
+        return new Promise((resolve) => resolve($host.post(`api/matrix/get`, {params})))
     }
 
 
