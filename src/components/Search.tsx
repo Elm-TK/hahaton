@@ -2,36 +2,46 @@ import {Autocomplete, CircularProgress, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import SearchParamsStore from "../store/SearchParamsStore.tsx";
-import MatrixStore from "../store/MatrixStore.tsx";
+import MatrixStore, {Baseline, SearchParams} from "../store/MatrixStore.tsx";
 import Table from "./Table.tsx";
 
 
 const Search = () => {
     const [selectedMatrix, setSelectedMatrix] = useState<string>('')
-    const [isMatrixSelected, setIsMatrixSelected] = useState(true)
-    const [selectedIds, setSelectedIds] = useState<string[]>([])
+    const [isMatrixSelected, setIsMatrixSelected] = useState(false)
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [selectedLocations, setSelectedLocations] = useState<string[]>([])
-    const [ids, setIds] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
     const [locations, setLocations] = useState<string[]>([])
-
+    const [reqRows, setReqRows] = useState<SearchParams[]>([])
     const [names, setNames] = useState<string[]>([])
-    // const [isBases, setIsBases] = useState<boolean[]>([])
 
-    const searchParams = new SearchParamsStore()
     const matrixParams = new MatrixStore()
 
-    const fetchParams = async () => {
-        const params = await searchParams.getSearchParams(selectedMatrix)
-        setIds(params[0])
-        setCategories(params[1].sort())
-        setLocations(params[2].sort())
+
+    const sendSearchParams = async () => {
+       const response = await  matrixParams.getRowsByParams([selectedMatrix, selectedCategories, selectedLocations])
+        console.log(response)
+        setReqRows(response)
     }
 
     const fetchQuantityMatrices = async () => {
         const quantity = await matrixParams.getQuantityMatrices()
-        setNames(quantity[0])
+        const baselinesNames: string[] = []
+        let cats: string[] = []
+        let loces: string[] = []
+        quantity[0].map((bases: Baseline) => {
+            baselinesNames.push(bases.name)
+        })
+
+
+        cats = quantity[3]
+        loces = quantity[4]
+
+
+        setNames(baselinesNames)
+        setCategories(cats)
+        setLocations(loces)
         // setIsBases([quantity[1]])
     }
 
@@ -39,9 +49,9 @@ const Search = () => {
         fetchQuantityMatrices()
     }, [])
 
-    useEffect(() => {
-        if (isMatrixSelected) fetchParams()
-    }, [selectedMatrix])
+    // useEffect(() => {
+    //     if (isMatrixSelected) fetchParams()
+    // }, [selectedMatrix])
 
     const selectMatrix = (value: string) => {
 
@@ -70,24 +80,24 @@ const Search = () => {
                         />
                     }
                 />
-                <Autocomplete
-                    multiple
-                    disabled={!isMatrixSelected}
-                    noOptionsText={'Такого ID нет'}
-                    className="mr-5"
-                    options={ids}
-                    sx={{width: "100%", marginBottom: '15px'}}
-                    ListboxProps={{style: {maxHeight: 300}}}
-                    onChange={(_event, values) => {
-                        setSelectedIds(values)
-                    }}
-                    renderInput={(params) =>
-                        <TextField
-                            {...params}
-                            label="ID строки"
-                        />
-                    }
-                />
+                {/*<Autocomplete*/}
+                {/*    multiple*/}
+                {/*    disabled={!isMatrixSelected}*/}
+                {/*    noOptionsText={'Такого ID нет'}*/}
+                {/*    className="mr-5"*/}
+                {/*    options={ids}*/}
+                {/*    sx={{width: "100%", marginBottom: '15px'}}*/}
+                {/*    ListboxProps={{style: {maxHeight: 300}}}*/}
+                {/*    onChange={(_event, values) => {*/}
+                {/*        setSelectedIds(values)*/}
+                {/*    }}*/}
+                {/*    renderInput={(params) =>*/}
+                {/*        <TextField*/}
+                {/*            {...params}*/}
+                {/*            label="ID строки"*/}
+                {/*        />*/}
+                {/*    }*/}
+                {/*/>*/}
                 <Autocomplete
                     multiple
                     disabled={!isMatrixSelected}
@@ -131,14 +141,14 @@ const Search = () => {
                             backgroundColor: "#00AAFF",
                             color: "#000000"
                         }}
-                        onClick={() => {
-                            matrixParams.getRowsByParams([selectedMatrix, selectedIds.map(string => +string), selectedCategories, selectedLocations])
-                        }}
+                        onClick={() => sendSearchParams()}
                 >Найти</Button>
             </div>
-            <>{isMatrixSelected ? <Table matrixName={selectedMatrix} categories={categories} locations={locations}/> : <CircularProgress />}</>
+            <>{(isMatrixSelected && reqRows.length > 0) ?
+                <Table matrixName={selectedMatrix} categories={categories} locations={locations} rows={reqRows}/> :
+                <CircularProgress/>}</>
         </div>
     );
 };
-
+// categories={categories} locations={locations} prices={prices}
 export default Search;

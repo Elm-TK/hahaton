@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import MatrixStore from "../store/MatrixStore.tsx";
+import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
+import MatrixStore, {Baseline, Discount} from "../store/MatrixStore.tsx";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -8,44 +8,49 @@ import {
     GridRowEditStopReasons, GridRowId, GridRowModel,
     GridRowModes,
     GridRowModesModel,
-    GridRowsProp,
-    GridToolbarContainer, ruRU
+    ruRU
 } from "@mui/x-data-grid";
-import {Matrix} from "../types/Matrix.tsx";
 import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import Box from "@mui/material/Box";
-import {TableProps} from "./Table.tsx";
-import {Autocomplete, TextField} from "@mui/material";
+import {Autocomplete, FormControlLabel, Switch, TextField} from "@mui/material";
 
-interface EditToolbarProps {
-    setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-    setRowModesModel: (
-        newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
-    ) => void;
+export type DiscountAndSegments = {
+    id: number
+    discountName: string
+    segment?: number[]
 }
 
-export default function Segments(props: TableProps) {
+export default function Segments() {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-    const [rows, setRows] = useState<Matrix[]>([])
-
-    // const [changes, setChanges] = useState<Map<number, string[]>>(new Map<number, string[]>)
-    const [newRows, setNewRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
-    const [deletedRows, setDeletedRows] = useState<number[]>([])
-    const [updatedRows, setUpdatedRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
-    const [maxId, setMaxId] = useState<number>(0)
+    const [rows, setRows] = useState<DiscountAndSegments[]>({} as DiscountAndSegments[])
+    const [updatedRows, setUpdatedRows] = useState<Map<number, number>>(new Map<number, number>)
     const [selectedRows, setSelectedRows] = useState<number[]>([])
-    const [names, setNames] = useState<string[]>([])
+    const [bases, setBases] = useState<Baseline[]>([])
+    const [discounts, setDiscounts] = useState<Discount[]>([])
+    const [freeSegments, setFreeSegments] = useState<number[]>([])
 
-    const [selectedMatrix, setSelectedMatrix] = useState<string>('')
-    const [isMatrixSelected, setIsMatrixSelected] = useState(false)
+
+    const [selectedMatrix, setSelectedMatrix] = useState<Baseline>({} as Baseline)
+
+    const [checked, setChecked] = useState(false);
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const matrix = selectedMatrix
+        setBases(bases.map((b) => {
+            const nb = b
+            nb.active = false
+            return nb
+        }))
+        matrix.active = !matrix.active
+        setSelectedMatrix(matrix)
+        setChecked(event.target.checked);
+    };
 
 
-    const matrixStore = new MatrixStore()
+    // const matrixStore = new MatrixStore()
     const matrixParams = new MatrixStore()
     // const putChangesMatix = async () => {
     //     await matrixStore.createChangesMatrix(changes)
@@ -53,55 +58,45 @@ export default function Segments(props: TableProps) {
 
     const fetchQuantityMatrices = async () => {
         const quantity = await matrixParams.getQuantityMatrices()
-        setNames(quantity[0])
-        // setIsBases([quantity[1]])
+        const b = quantity[0] as Baseline[]
+        const rs: DiscountAndSegments[] = []
+        for (let i = 0; i < quantity[1].length; i++) {
+            const r: DiscountAndSegments = {} as DiscountAndSegments
+            r.id = quantity[1][i].id
+            r.discountName = quantity[1][i].name
+            if (quantity[0][i])
+                r.segment = quantity[1][i].segment
+            rs.push(r)
+        }
+        setRows(rs)
+        setSelectedMatrix(b.filter((m) => m.active)[0])
+        setBases(b)
+        setDiscounts(quantity[1] as Baseline[])
+        setFreeSegments(quantity[2] as number[])
     }
 
     useEffect(() => {
         fetchQuantityMatrices()
     }, [])
 
-    const selectMatrix = (value: string) => {
+    const selectMatrix = (name: string) => {
 
-        if (value.length > 0) {
-            setIsMatrixSelected(true)
-            setSelectedMatrix(value)
-        } else setIsMatrixSelected(false)
-    }
-
-    async function fetch() {
-        const res = await matrixStore.getAllRows()
-        setRows(res)
-        setMaxId(res.length)
-    }
-
-    function EditToolbar(props: EditToolbarProps) {
-        const {setRows, setRowModesModel} = props;
-
-        const handleClick = () => {
-            const id = Number(maxId + 1);
-            setNewRows(newRows.set(id, []))
-            setMaxId(maxId + 1)
-            setRows((oldRows) => [...oldRows, {id, name: '', email: '', isNew: true}]);
-            setRowModesModel((oldModel) => ({
-                ...oldModel,
-                [id]: {mode: GridRowModes.Edit, fieldToFocus: 'name'},
-            }))
+        if (name.length > 0) {
+            const matrix = bases.filter((m) => m.name == name)[0]
+            setSelectedMatrix(matrix)
+            setChecked(matrix.active)
         }
-
-        return (
-            <GridToolbarContainer>
-                <Button color="primary" startIcon={<AddIcon/>} onClick={handleClick}>
-                    Добавить строку
-                </Button>
-            </GridToolbarContainer>
-        );
     }
 
+    // async function fetch() {
+    //     const res = await matrixStore.getAllRows()
+    //     setRows(res)
+    //     setMaxId(res.length)
+    // }
 
-    useEffect(() => {
-        fetch()
-    }, [])
+    // useEffect(() => {
+    //     fetch()
+    // }, [])
 
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
@@ -118,22 +113,6 @@ export default function Segments(props: TableProps) {
         setRowModesModel({...rowModesModel, [id]: {mode: GridRowModes.View}});
     };
 
-    const handleDeleteClick = (id: GridRowId) => () => {
-        if (newRows.get(Number(id))) {
-            const nr = newRows
-            nr.delete(Number(id))
-            setNewRows(nr)
-        }
-        newRows.delete(Number(id))
-        if (updatedRows.get(Number(id))) {
-            const ur = updatedRows
-            ur.delete(Number(id))
-            setUpdatedRows(ur)
-            setDeletedRows([...deletedRows, Number(id)])
-        }
-        setRows(rows.filter((row) => row.id !== id));
-    };
-
     const handleCancelClick = (id: GridRowId) => () => {
         setRowModesModel({
             ...rowModesModel,
@@ -146,12 +125,10 @@ export default function Segments(props: TableProps) {
         }
     };
 
-    const processRowUpdate = (newRow: GridRowModel) => {
-        if (newRow.category && newRow.location && newRow.value) {
-            if (newRows.get(newRow.id))
-                setNewRows(newRows.set(newRow.id, [newRow.category, newRow.location, newRow.value]))
-            else
-                setUpdatedRows(updatedRows.set(Number(newRow.id), [newRow.category, newRow.location, newRow.value]))
+    const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+        if (newRow.discountName && newRow.segment) {
+            setFreeSegments([...freeSegments.filter((s) => s != newRow.segment), oldRow.segment])
+            setUpdatedRows(updatedRows.set(newRow.id, newRow.segment))
             const updatedRow = {...newRow, isNew: false};
             setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
             return updatedRow;
@@ -170,20 +147,20 @@ export default function Segments(props: TableProps) {
             editable: false
         },
         {
-            field: 'category',
+            field: 'discountName',
             headerName: 'Discount матрица',
             width: 300,
             editable: true,
             type: 'singleSelect',
-            valueOptions: props.categories,
+            valueOptions: discounts.map((d) => d.name),
         },
         {
-            field: 'location',
+            field: 'segment',
             headerName: 'Сегмент',
             width: 300,
             editable: true,
             type: 'singleSelect',
-            valueOptions: props.locations,
+            valueOptions: freeSegments.sort(),
         },
         {
             field: 'actions',
@@ -222,37 +199,42 @@ export default function Segments(props: TableProps) {
                         onClick={handleEditClick(id)}
                         color="inherit"
                     />,
-                    <GridActionsCellItem
-                        icon={<DeleteIcon/>}
-                        label="Delete"
-                        onClick={handleDeleteClick(id)}
-                        color="inherit"
-                    />,
                 ];
             },
         },
     ];
-    // console.log('newRows', newRows)
+    // console.log(bases, discounts, freeSegments)
+    //
     // console.log('updatedRows', updatedRows)
-    // console.log('deletedRows', deletedRows)
     return (
         <>
-            <Autocomplete
-                noOptionsText={'Такой категории нет'}
-                className="mr-5"
-                options={names}
-                sx={{width: "100%", marginBottom: '15px'}}
-                ListboxProps={{style: {maxHeight: 300}}}
-                onInputChange={(_event: React.SyntheticEvent, value: string) =>
-                    selectMatrix(value)
-                }
-                renderInput={(params) =>
-                    <TextField
-                        {...params}
-                        label="Матрица"
+            {bases.length > 0 ?
+                <div className="flex">
+                    <Autocomplete
+                        value={selectedMatrix.name}
+                        noOptionsText={'Такой категории нет'}
+                        className="mr-5"
+                        options={bases.length > 1 ? [bases[0].name, bases[1].name] : ['awg']}
+                        sx={{width: "100%", marginBottom: '15px'}}
+                        ListboxProps={{style: {maxHeight: 300}}}
+                        onInputChange={(_event: SyntheticEvent, value: string) =>
+                            selectMatrix(value)
+                        }
+                        renderInput={(params) =>
+                            <TextField
+                                {...params}
+                                label="Матрица"
+                            />
+                        }
                     />
-                }
-            />
+                    <FormControlLabel
+                        control={<Switch name="baseActive"/>}
+                        checked={checked}
+                        onChange={handleChange}
+                        label="Активна"
+                    />
+                </div> : <span></span>}
+
             <Box
                 sx={{
                     height: '700px',
@@ -275,9 +257,6 @@ export default function Segments(props: TableProps) {
                     onRowModesModelChange={handleRowModesModelChange}
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
-                    slots={{
-                        toolbar: EditToolbar,
-                    }}
                     slotProps={{
                         toolbar: {setRows, setRowModesModel},
                     }}
@@ -287,7 +266,7 @@ export default function Segments(props: TableProps) {
                 />
             </Box>
             <Button variant="contained"
-                    onClick={() => console.log(props.matrixName, newRows, updatedRows, deletedRows)}>Пуск</Button>
+                    onClick={() => console.log(selectedMatrix.id, updatedRows)}>Пуск</Button>
         </>
     );
 }
