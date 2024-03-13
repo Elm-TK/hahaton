@@ -44,7 +44,6 @@ export default function Table(props: TableProps) {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rows, setRows] = useState<Matrix[]>([])
 
-    // const [changes, setChanges] = useState<Map<number, string[]>>(new Map<number, string[]>)
     const [newRows, setNewRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
     const [deletedRows, setDeletedRows] = useState<number[]>([])
     const [updatedRows, setUpdatedRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
@@ -155,13 +154,16 @@ export default function Table(props: TableProps) {
         {
             field: 'id',
             headerName: 'ID',
+            type: 'number',
             width: 100,
-            editable: false
+            editable: false,
+            headerAlign: "left",
+            align: "left",
         },
         {
             field: 'category',
             headerName: 'Категория',
-            width: 300,
+            width: 250,
             editable: true,
             type: 'singleSelect',
             valueOptions: props.categories,
@@ -169,7 +171,7 @@ export default function Table(props: TableProps) {
         {
             field: 'location',
             headerName: 'Локация',
-            width: 300,
+            width: 250,
             editable: true,
             type: 'singleSelect',
             valueOptions: props.locations,

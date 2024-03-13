@@ -1,6 +1,6 @@
 import MatrixService from "../service/MatrixService.tsx";
 
-class Baseline {
+export class Baseline {
     id: number;
     name: string;
     active: boolean;
@@ -12,13 +12,13 @@ class Baseline {
     }
 }
 
-class Discount {
+export class Discount {
     id: number;
     name: string;
     active: boolean;
-    segment?: number[];
+    segment?: number;
 
-    constructor(id: number, name: string, active: boolean, segment?: number[]) {
+    constructor(id: number, name: string, active: boolean, segment?: number) {
         this.id = id
         this.name = name
         this.active = active
@@ -85,29 +85,35 @@ export default class MatrixStore {
 
         const response = await MatrixService.getQuantity()
 
-        response.data.baseline.forEach((obj: Baseline) => {
-            const base = new Baseline(obj["id"], obj["name"], obj["active"])
-            bases.push(base)
-        })
+        // response.data.baseline.forEach((obj: Baseline) => {
+        //     const base = new Baseline(obj["id"], obj["name"], obj["active"])
+        //     bases.push(base)
+        // })
+        //
+        // response.data.discounts.forEach((obj: Discount) => {
+        //     const discount = new Discount(obj["id"], obj["name"], obj["active"], obj["segment"])
+        //     discounts.push(discount)
+        // })
 
-        response.data.discounts.forEach((obj: Discount) => {
-            const discount = new Discount(obj["id"], obj["name"], obj["active"], obj["segment"])
-            discounts.push(discount)
-        })
+        // unused_segments = response.data.unused_segments
 
-        unused_segments = response.data.unused_segments
-
+        const tempBases = [new Baseline(111, "nnnn", false), new Baseline(745612, "awgaeawrhjt", true)]
+        const tempDiscounts = [
+            new Discount(11, 'Disc11', true, 55),
+            new Discount(111, 'Disc111', true, 99),
+            new Discount(1111, 'Disc1111', true)
+        ]
+        const tempSegments = [1, 0, 12, 4956, 841, 195, 984]
         this.setMatricesParams(names, isBases)
 
-        return [bases, discounts, unused_segments]
+        return [tempBases, tempDiscounts, tempSegments]
     }
 
     async createChangesMatrix(name: string, updates: Map<number, string[]>, creates: Map<number, string[]>, del: number[]) {
 
         const upds: Update[] = []
         const crts: Create[] = []
-        updates.forEach
-        ((obj, key, map) => {
+        updates.forEach((obj, key, map) => {
             const row = map.get(key)
             const update = new Update(key, row[0], row[1], Number(row[2]))
             upds.push(update)
