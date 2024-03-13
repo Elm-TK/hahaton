@@ -118,29 +118,18 @@ export default class MatrixStore {
         })
 
         creates.forEach((obj) => {
-            const create = new Create(obj[0], obj[1], Number(obj[2]))
-            crts.push(create)
+            if (obj.length > 0){
+                const create = new Create(obj[0], obj[1], Number(obj[2]))
+                crts.push(create)
+            }
         })
 
-        // const changes: { name: string, updates: Update[], create: Create[], del: number[] } = {
-        //     "name": name,
-        //     "updates": upds,
-        //     "create": crts,
-        //     "del": del,
-        // }
 
         return await MatrixService.changeRowsMatrix(name, upds, crts, del)
     }
 
     async getRowsByParams(params: [string, string[], string[]]) {
         const rows: SearchParams[] = []
-
-        let parametrs: { nameMatrix: string, categories: string[], locations: string[] } = {
-            "nameMatrix": params[0],
-            "categories": params[1],
-            "locations": params[2]
-        }
-
 
         const response = await MatrixService.searchByParams(params[0], params[1], params[2])
         response.data.forEach((obj: SearchParams) => {
