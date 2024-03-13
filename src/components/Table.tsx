@@ -42,7 +42,6 @@ export type TableProps = {
 export default function Table(props: TableProps) {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [rows, setRows] = useState<SearchParams[]>(props.rows)
-
     const [newRows, setNewRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
     const [deletedRows, setDeletedRows] = useState<number[]>([])
     const [updatedRows, setUpdatedRows] = useState<Map<number, string[]>>(new Map<number, string[]>)
@@ -50,15 +49,15 @@ export default function Table(props: TableProps) {
     const [selectedRows, setSelectedRows] = useState<number[]>([])
 
 
-    useEffect(() =>{
+    useEffect(() => {
         if (rows != props.rows) {
             setRows(props.rows)
         }
 
         if (maxId != props.rows.length) {
-            setMaxId(props.rows[rows.length-1].id)
+            setMaxId(Number(props.rows[rows.length - 1].id))
         }
-    },[])
+    }, [])
 
     const matrixStore = new MatrixStore()
 
@@ -70,8 +69,7 @@ export default function Table(props: TableProps) {
         const {setRows, setRowModesModel} = props;
 
         const handleClick = () => {
-            const id = Number(maxId + 1);
-            console.log(maxId,'----' )
+            const id = maxId + 1
             setNewRows(newRows.set(id, []))
             setMaxId(maxId + 1)
             setRows((oldRows) => [...oldRows, {id, name: '', email: '', isNew: true}]);
@@ -108,16 +106,17 @@ export default function Table(props: TableProps) {
     const handleDeleteClick = (id: GridRowId) => () => {
         console.log(id, "------", newRows)
         if (newRows.get(Number(id))) {
+            console.log(id, "нашлась в новых")
             const nr = newRows
             nr.delete(Number(id))
             setNewRows(nr)
-        }
+        } else setDeletedRows([...deletedRows, Number(id)])
         newRows.delete(Number(id))
         if (updatedRows.get(Number(id))) {
+            console.log(id, "нашлась в изменённых")
             const ur = updatedRows
             ur.delete(Number(id))
             setUpdatedRows(ur)
-            setDeletedRows([...deletedRows, Number(id)])
         }
         setRows(rows.filter((row) => row.id !== id));
     };
@@ -166,7 +165,7 @@ export default function Table(props: TableProps) {
             width: 250,
             editable: true,
             type: 'singleSelect',
-            valueOptions: [... new Set(props.categories)],
+            valueOptions: [...new Set(props.categories)],
         },
         {
             field: 'location',
@@ -174,7 +173,7 @@ export default function Table(props: TableProps) {
             width: 250,
             editable: true,
             type: 'singleSelect',
-            valueOptions: [... new Set(props.locations)],
+            valueOptions: [...new Set(props.locations)],
         },
         {
             field: 'value',
@@ -230,9 +229,9 @@ export default function Table(props: TableProps) {
             },
         },
     ];
-    // console.log('newRows', newRows)
-    // console.log('updatedRows', updatedRows)
-    // console.log('deletedRows', deletedRows)
+    console.log('newRows', newRows)
+    console.log('updatedRows', updatedRows)
+    console.log('deletedRows', deletedRows)
     console.log(selectedRows)
     return (
         <>

@@ -15,7 +15,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
-import {Autocomplete, FormControlLabel, Switch, TextField} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 
 export type DiscountAndSegments = {
     id: number
@@ -30,12 +30,10 @@ export default function Segments() {
     const [selectedRows, setSelectedRows] = useState<number[]>([])
     const [bases, setBases] = useState<Baseline[]>([])
     const [discounts, setDiscounts] = useState<Discount[]>([])
-    const [freeSegments, setFreeSegments] = useState<number[]>([])
+    const [freeSegments, setFreeSegments] = useState<number[] | string[]>([])
 
 
     const [selectedMatrix, setSelectedMatrix] = useState<Baseline>({} as Baseline)
-
-    const [checked, setChecked] = useState(false);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const matrix = selectedMatrix
@@ -46,20 +44,15 @@ export default function Segments() {
         }))
         matrix.active = !matrix.active
         setSelectedMatrix(matrix)
-        setChecked(event.target.checked);
     };
 
-
-    // const matrixStore = new MatrixStore()
     const matrixParams = new MatrixStore()
-    // const putChangesMatix = async () => {
-    //     await matrixStore.createChangesMatrix(changes)
-    // }
 
     const fetchQuantityMatrices = async () => {
         const quantity = await matrixParams.getQuantityMatrices()
         const b = quantity[0] as Baseline[]
         const rs: DiscountAndSegments[] = []
+        const selected: number[] = []
         for (let i = 0; i < quantity[1].length; i++) {
             const r: DiscountAndSegments = {} as DiscountAndSegments
             r.id = quantity[1][i].id
@@ -67,12 +60,17 @@ export default function Segments() {
             if (quantity[0][i])
                 r.segment = quantity[1][i].segment
             rs.push(r)
+            if (quantity[1][i].active) {
+                console.log(quantity[1][i])
+                selected.push(r.id)
+            }
         }
+        setSelectedRows(selected)
         setRows(rs)
         setSelectedMatrix(b.filter((m) => m.active)[0])
         setBases(b)
         setDiscounts(quantity[1] as Baseline[])
-        setFreeSegments(quantity[2] as number[])
+        setFreeSegments([...quantity[2], '—'])
     }
 
     useEffect(() => {
@@ -84,20 +82,8 @@ export default function Segments() {
         if (name.length > 0) {
             const matrix = bases.filter((m) => m.name == name)[0]
             setSelectedMatrix(matrix)
-            setChecked(matrix.active)
         }
     }
-
-    // async function fetch() {
-    //     const res = await matrixStore.getAllRows()
-    //     setRows(res)
-    //     setMaxId(res.length)
-    // }
-
-    // useEffect(() => {
-    //     fetch()
-    // }, [])
-
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -127,7 +113,9 @@ export default function Segments() {
 
     const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
         if (newRow.discountName && newRow.segment) {
-            setFreeSegments([...freeSegments.filter((s) => s != newRow.segment), oldRow.segment])
+            const newFreeSegments = [...freeSegments.filter((s) => s != newRow.segment || s == '—')]
+            if (oldRow.segments) newFreeSegments.push(oldRow.segments)
+            setFreeSegments(newFreeSegments)
             setUpdatedRows(updatedRows.set(newRow.id, newRow.segment))
             const updatedRow = {...newRow, isNew: false};
             setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -150,7 +138,7 @@ export default function Segments() {
             field: 'discountName',
             headerName: 'Discount матрица',
             width: 300,
-            editable: true,
+            editable: false,
             type: 'singleSelect',
             valueOptions: discounts.map((d) => d.name),
         },
@@ -204,7 +192,7 @@ export default function Segments() {
         },
     ];
     // console.log(bases, discounts, freeSegments)
-    //
+
     // console.log('updatedRows', updatedRows)
     return (
         <>
@@ -223,17 +211,12 @@ export default function Segments() {
                         renderInput={(params) =>
                             <TextField
                                 {...params}
-                                label="Матрица"
+                                label="Активная матрица"
                             />
                         }
                     />
-                    <FormControlLabel
-                        control={<Switch name="baseActive"/>}
-                        checked={checked}
-                        onChange={handleChange}
-                        label="Активна"
-                    />
-                </div> : <span></span>}
+                </div> : <span></span>
+            }
 
             <Box
                 sx={{
@@ -249,6 +232,7 @@ export default function Segments() {
             >
                 <DataGrid
                     localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+                    rowSelectionModel={selectedRows}
                     checkboxSelection
                     rows={rows}
                     columns={columns}
@@ -266,7 +250,7 @@ export default function Segments() {
                 />
             </Box>
             <Button variant="contained"
-                    onClick={() => console.log(selectedMatrix.id, updatedRows)}>Пуск</Button>
+                    onClick={() => console.log(selectedMatrix.id, selectedRows, updatedRows)}>Пуск</Button>
         </>
     );
 }
