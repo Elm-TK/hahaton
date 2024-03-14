@@ -113,7 +113,9 @@ export default function Segments() {
     };
 
     const createStorage = async () => {
-        return await matrixParams.createStorage(selectedMatrix.id, selectedRows, updatedRows)
+        const response = matrixParams.createStorage(selectedMatrix.id, selectedRows, updatedRows)
+        window.location.reload();
+        return response
     }
 
     useEffect(() => {

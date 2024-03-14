@@ -131,7 +131,8 @@ const Search = () => {
                 >Найти</Button>
             </div>
             <div className="flex w-full items-center justify-center text-2xl">{tableActive ?
-                <Table matrixName={selectedMatrix} categories={(!cates.length? categories: cates)} locations={(!loces.length ? locations : loces)}
+                <Table matrixName={selectedMatrix} categories={(!cates.length ? categories : cates)}
+                       locations={(!loces.length ? locations : loces)}
                        rows={reqRows}/> :
                 <p>Не выбрана матрица или в ней нет подходящих значений</p>}
             </div>

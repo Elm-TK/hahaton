@@ -16,7 +16,7 @@ interface TabPanelProps {
 }
 
 function CustomTabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
         <div
@@ -27,7 +27,7 @@ function CustomTabPanel(props: TabPanelProps) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
+                <Box sx={{p: 3}}>
                     <Typography>{children}</Typography>
                 </Box>
             )}
@@ -52,7 +52,7 @@ export default function MainPage() {
     return (
         <div className="flex">
             <div className="mx-auto">
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         <Tab label="Изменение матриц" {...a11yProps(0)} />
                         <Tab label="Составление стореджа" {...a11yProps(1)} />

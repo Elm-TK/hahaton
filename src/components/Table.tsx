@@ -62,8 +62,10 @@ export default function Table(props: TableProps) {
 
     const matrixStore = new MatrixStore()
 
-    const putChangesMatix = async () => {
-        await matrixStore.createChangesMatrix(props.matrixName, updatedRows, newRows, deletedRows)
+    const putChangesMatrix = async () => {
+        const response = await matrixStore.createChangesMatrix(props.matrixName, updatedRows, newRows, deletedRows)
+        window.location.reload();
+        return response
     }
 
     function EditToolbar(props: EditToolbarProps) {
@@ -244,8 +246,10 @@ export default function Table(props: TableProps) {
         }
     ]
 
-    const changeSelectedRows = async() => {
-        await matrixStore.changePrice(props.matrixName,selectedRows, radioValue, valueChange, percentOrValue)
+    const changeSelectedRows = async () => {
+        const response = matrixStore.changePrice(props.matrixName, selectedRows, radioValue, valueChange, percentOrValue)
+        window.location.reload();
+        return response
     }
     return (
         <div className="flex flex-col">
@@ -284,7 +288,7 @@ export default function Table(props: TableProps) {
                     />
                 </Box>
                 <Button variant="contained" sx={{marginLeft: "5px"}}
-                        onClick={() => putChangesMatix()}>Отправить</Button>
+                        onClick={() => putChangesMatrix()}>Отправить</Button>
             </div>
             <div className="flex items-center justify-center mt-5">
                 <RadioGroup
