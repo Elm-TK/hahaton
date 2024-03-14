@@ -296,7 +296,7 @@ export default function Table(props: TableProps) {
                     <FormControlLabel value="up" control={<Radio/>} label='Увеличить'/>
                     <FormControlLabel value="down" control={<Radio/>} label='Уменьшить'/>
                 </RadioGroup>
-                <p className="mr-5">выделенные на</p>
+                <p className="mr-5 text-lg">выделенные на</p>
                 <TextField
                     id="outlined-controlled"
                     type="number"

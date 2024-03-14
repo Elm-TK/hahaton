@@ -125,6 +125,7 @@ const Search = () => {
                     }
                 />
                 <Button variant="contained"
+                        sx={{width: '100%'}}
                         disabled={!isMatrixSelected}
                         onClick={() => sendSearchParams()}
                 >Найти</Button>
