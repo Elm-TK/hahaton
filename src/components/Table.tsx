@@ -20,8 +20,9 @@ import {
     GridRowEditStopReasons, ruRU,
 } from '@mui/x-data-grid';
 
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import MatrixStore, {SearchParams} from "../store/MatrixStore.tsx";
+import {FormControlLabel, MenuItem, Radio, RadioGroup, TextField} from "@mui/material";
 
 
 interface EditToolbarProps {
@@ -158,7 +159,7 @@ export default function Table(props: TableProps) {
         {
             field: 'category',
             headerName: 'Категория',
-            width: 250,
+            width: 225,
             editable: true,
             type: 'singleSelect',
             valueOptions: [...new Set(props.categories)],
@@ -166,7 +167,7 @@ export default function Table(props: TableProps) {
         {
             field: 'location',
             headerName: 'Локация',
-            width: 250,
+            width: 225,
             editable: true,
             type: 'singleSelect',
             valueOptions: [...new Set(props.locations)],
@@ -174,7 +175,7 @@ export default function Table(props: TableProps) {
         {
             field: 'value',
             headerName: 'Цена',
-            width: 120,
+            width: 100,
             type: 'number',
             editable: true,
         },
@@ -182,7 +183,7 @@ export default function Table(props: TableProps) {
             field: 'actions',
             type: 'actions',
             headerName: 'Действия',
-            width: 180,
+            width: 135,
             cellClassName: 'actions',
             getActions: ({id}) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -225,43 +226,100 @@ export default function Table(props: TableProps) {
             },
         },
     ];
+    const [radioValue, setRadioValue] = useState("up")
+    const [valueChange, setValueChange] = useState(0)
+    const [percentOrValue, setPercentOrValue] = useState("percent")
+    // const []
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setRadioValue((event.target as HTMLInputElement).value);
+    };
+    const currencies = [
+        {
+            value: 'percent',
+            label: '%',
+        },
+        {
+            value: 'value',
+            label: '₽',
+        }
+    ]
 
+    const changeSelectedRows = () => {
+        console.log(selectedRows, radioValue, valueChange, percentOrValue)
+    }
     return (
-        <>
-            <Box
-                sx={{
-                    height: '700px',
-                    width: '100%',
-                    '& .actions': {
-                        color: 'text.secondary',
-                    },
-                    '& .textPrimary': {
-                        color: 'text.primary',
-                    },
-                }}
-            >
-                <DataGrid
-                    localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
-                    checkboxSelection
-                    rows={rows}
-                    columns={columns}
-                    editMode="row"
-                    rowModesModel={rowModesModel}
-                    onRowModesModelChange={handleRowModesModelChange}
-                    onRowEditStop={handleRowEditStop}
-                    processRowUpdate={processRowUpdate}
-                    slots={{
-                        toolbar: EditToolbar,
+        <div className="flex flex-col">
+            <div className="flex">
+                <Box
+                    sx={{
+                        height: '600px',
+                        width: '850px',
+                        '& .actions': {
+                            color: 'text.secondary',
+                        },
+                        '& .textPrimary': {
+                            color: 'text.primary',
+                        },
                     }}
-                    slotProps={{
-                        toolbar: {setRows, setRowModesModel},
-                    }}
-                    onRowSelectionModelChange={(ids) => {
-                        setSelectedRows(ids.map(string => +string))
+                >
+                    <DataGrid
+                        localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+                        checkboxSelection
+                        rows={rows}
+                        columns={columns}
+                        editMode="row"
+                        rowModesModel={rowModesModel}
+                        onRowModesModelChange={handleRowModesModelChange}
+                        onRowEditStop={handleRowEditStop}
+                        processRowUpdate={processRowUpdate}
+                        slots={{
+                            toolbar: EditToolbar,
+                        }}
+                        slotProps={{
+                            toolbar: {setRows, setRowModesModel},
+                        }}
+                        onRowSelectionModelChange={(ids) => {
+                            setSelectedRows(ids.map(string => +string))
+                        }}
+                    />
+                </Box>
+                <Button variant="contained" sx={{marginLeft: "5px"}}
+                        onClick={() => putChangesMatix()}>Отправить</Button>
+            </div>
+            <div className="flex items-center justify-center mt-5">
+                <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    defaultValue="up"
+                    onChange={handleChange}
+                >
+                    <FormControlLabel value="up" control={<Radio/>} label='Увеличить'/>
+                    <FormControlLabel value="down" control={<Radio/>} label='Уменьшить'/>
+                </RadioGroup>
+                <p className="mr-5">выделенные на</p>
+                <TextField
+                    id="outlined-controlled"
+                    type="number"
+                    value={valueChange}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setValueChange(Number(event.target.value));
                     }}
                 />
-            </Box>
-            <Button variant="contained" onClick={() => putChangesMatix()}>Пуск</Button>
-        </>
+                <TextField
+                    id="percent-or-value"
+                    select
+                    defaultValue={'percent'}
+                    onChange={(event) => setPercentOrValue(event.target.value)}
+                >
+                    {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <Button sx={{marginLeft: '10px'}} variant="contained"
+                        onClick={() => changeSelectedRows()}>Изменить</Button>
+            </div>
+        </div>
     );
 }

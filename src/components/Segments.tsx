@@ -113,7 +113,7 @@ export default function Segments() {
     };
 
     const createStorage = async () => {
-        return await  matrixParams.createStorage(selectedMatrix.id, selectedRows, updatedRows)
+        return await matrixParams.createStorage(selectedMatrix.id, selectedRows, updatedRows)
     }
 
     useEffect(() => {
@@ -210,7 +210,7 @@ export default function Segments() {
 
             <Box
                 sx={{
-                    height: '700px',
+                    height: '600px',
                     width: '100%',
                     '& .actions': {
                         color: 'text.secondary',
@@ -240,7 +240,8 @@ export default function Segments() {
                 />
             </Box>
             <Button variant="contained"
-                    onClick={() => createStorage()}>Пуск</Button>
+                    sx={{width: '100%', marginTop: '10px'}}
+                    onClick={() => createStorage()}>Отправить</Button>
         </>
     );
 }

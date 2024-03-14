@@ -51,7 +51,7 @@ export default function MainPage() {
 
     return (
         <div className="flex">
-            <Box sx={{ width: '1024px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <div className="mx-auto">
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         <Tab label="Изменение матриц" {...a11yProps(0)} />
@@ -64,7 +64,7 @@ export default function MainPage() {
                 <CustomTabPanel value={value} index={1}>
                     <Segments/>
                 </CustomTabPanel>
-            </Box>
+            </div>
         </div>
     );
 }

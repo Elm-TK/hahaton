@@ -126,19 +126,14 @@ const Search = () => {
                 />
                 <Button variant="contained"
                         disabled={!isMatrixSelected}
-                        style={{
-                            width: '100%',
-                            backgroundColor: "#00AAFF",
-                            color: "#000000"
-                        }}
                         onClick={() => sendSearchParams()}
                 >Найти</Button>
             </div>
-            <>{tableActive ?
+            <div className="flex w-full items-center justify-center text-2xl">{tableActive ?
                 <Table matrixName={selectedMatrix} categories={(!cates.length? categories: cates)} locations={(!loces.length ? locations : loces)}
                        rows={reqRows}/> :
-                <p>выберите матрицу</p>}</>
-            {/*<CircularProgress/>*/}
+                <p>Не выбрана матрица или в ней нет подходящих значений</p>}
+            </div>
         </div>
     );
 };
