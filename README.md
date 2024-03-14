@@ -9,7 +9,7 @@
 На стороне клиента НЕ поступают запросы для получения всех строк матриц, происходит поиск только по нужным категориям и локациям, цены устанавливаются как вручную, так и с возможность изменения цены сразу у нескольких строк в матрице.
 
 Стек используемых технологий:
-⋅⋅1. TypeScripte [Static Badge](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+⋅⋅1. TypeScripte [logo]https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
 ⋅⋅2. React [Static Badge](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 ⋅⋅3. Vite [Static Badge](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E
 ⋅⋅4. Material UI [Static Badge](https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white
