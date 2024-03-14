@@ -1,30 +1,10 @@
-# React + TypeScript + Vite
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F+%D0%BA+%D0%BA%D0%B5%D0%B9%D1%81%D1%83+%D0%B0%D0%B2%D0%B8%D1%82%D0%BE)](https://git.io/typing-svg)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клиентская часть представляет из себя админ панель, с удобным UI.
 
-Currently, two official plugins are available:
+При заходе на страницу, перед аналитиком появляются две вкладки:
+"Изменение матриц" позволяет изменять, удалять и добавлять значения в выбранную матрицу. После изменений цены передаются в сервис отдачи цен.
+"Составление стореджа" позволяет аналитику назначать активную бейз матрицу, выбирать назначение активных дисконт матриц, изменять их сегменты, а так же назначать/изменять сегменты для них после чего отправлять данные на сервис.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+На стороне клиента НЕ поступают запросы для получения всех строк матриц, происходит поиск только по нужным категориям и локациям, цены устанавливаются как вручную, так и с возможность изменения цены сразу у нескольких строк в матрице.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
