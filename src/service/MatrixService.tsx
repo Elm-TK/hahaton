@@ -20,4 +20,8 @@ export default class MatrixService {
     static async createStorage(id: number, active: number[], upSeg: StorageDiscount[]){
         return new Promise((resolve) => resolve($host.put("api/main/configureServer",{id,active,upSeg})))
     }
+
+    static async changePrice(name: string, ids:number[],operator: string, value: number){
+        return new Promise((resolve) => resolve($host.put("api/matrix/increase",{name, ids, operator,value})))
+    }
 }

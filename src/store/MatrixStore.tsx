@@ -167,6 +167,23 @@ export default class MatrixStore {
         return await MatrixService.createStorage(id, activeDiscounts, upSeg)
     }
 
+    async changePrice(name: string, ids: number[], operator: string, value: number, operatorType: string) {
+        let oper: string = ''
+
+        if (operator == "up" && operatorType == "percent") {
+            oper = "*"
+        } if (operator == "down" && operatorType == "percent") {
+            oper = "/"
+        } if (operator == "up" && operatorType == "value") {
+            oper = "+"
+        } if (operator == "down" && operatorType == "value") {
+            oper = "-"
+        }
+
+        return await MatrixService.changePrice(name, ids,oper,value)
+    }
+
+
     setMatricesParams(names: string[], isBases: boolean[]) {
         this._Names = names
         this._IsBase = isBases

@@ -244,8 +244,8 @@ export default function Table(props: TableProps) {
         }
     ]
 
-    const changeSelectedRows = () => {
-        console.log(selectedRows, radioValue, valueChange, percentOrValue)
+    const changeSelectedRows = async() => {
+        await matrixStore.changePrice(props.matrixName,selectedRows, radioValue, valueChange, percentOrValue)
     }
     return (
         <div className="flex flex-col">
