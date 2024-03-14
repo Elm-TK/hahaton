@@ -183,7 +183,7 @@ export default function Table(props: TableProps) {
             field: 'actions',
             type: 'actions',
             headerName: 'Действия',
-            width: 135,
+            width: 130,
             cellClassName: 'actions',
             getActions: ({id}) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
