@@ -1,5 +1,5 @@
 import {$host} from "../http";
-import {Create, Update} from "../store/MatrixStore.tsx";
+import {Create, StorageDiscount, Update} from "../store/MatrixStore.tsx";
 
 
 export default class MatrixService {
@@ -15,5 +15,9 @@ export default class MatrixService {
 
     static async searchByParams(nameMatrix: string, categories: string[], locations: string[]) {
         return new Promise((resolve) => resolve($host.post(`api/matrix/get`, {nameMatrix, categories, locations})))
+    }
+
+    static async createStorage(id: number, active: number[], upSeg: StorageDiscount[]){
+        return new Promise((resolve) => resolve($host.put("api/main/configureServer",{id,active,upSeg})))
     }
 }

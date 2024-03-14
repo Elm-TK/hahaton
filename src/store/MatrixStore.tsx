@@ -67,6 +67,16 @@ export class Create {
     }
 }
 
+export class StorageDiscount {
+    id: number;
+    segment: number;
+
+    constructor(id: number, segment: number) {
+        this.id = id
+        this.segment = segment
+    }
+}
+
 export default class MatrixStore {
     private _IsBase: boolean[];
     private _Names: string[];
@@ -91,10 +101,8 @@ export default class MatrixStore {
             bases.push(base)
         })
         response.discounts.forEach((obj: Discount) => {
-
             const discount = new Discount(obj["id"], obj["name"], obj["active"], obj["segment"])
             discounts.push(discount)
-
         })
 
         cates = response.categories
@@ -118,7 +126,7 @@ export default class MatrixStore {
         })
 
         creates.forEach((obj) => {
-            if (obj.length > 0){
+            if (obj.length > 0) {
                 const create = new Create(obj[0], obj[1], Number(obj[2]))
                 crts.push(create)
             }
@@ -131,15 +139,33 @@ export default class MatrixStore {
         const rows: SearchParams[] = []
 
         const response = await MatrixService.searchByParams(params[0], params[1], params[2])
+
+
         response.data.forEach((obj: SearchParams) => {
             const params = new SearchParams(obj.id, obj.category, obj.location, obj.value)
             rows.push(params)
         })
 
-        // возвращаются все строки
         return rows
     }
 
+
+    async createStorage(id: number, activeDiscounts: number[], addedDiscounts: Map<number, number>) {
+        const upSeg: StorageDiscount[] = []
+
+        addedDiscounts.forEach((value, key, map) => {
+            if (value === "—") {
+                addedDiscounts.set(key, null);
+            }
+        })
+
+        addedDiscounts.forEach((value, key, map) => {
+            const add = new StorageDiscount(key, value)
+            upSeg.push(add)
+        })
+
+        return await MatrixService.createStorage(id, activeDiscounts, upSeg)
+    }
 
     setMatricesParams(names: string[], isBases: boolean[]) {
         this._Names = names

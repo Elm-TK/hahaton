@@ -225,10 +225,7 @@ export default function Table(props: TableProps) {
             },
         },
     ];
-    console.log('newRows', newRows)
-    console.log('updatedRows', updatedRows)
-    console.log('deletedRows', deletedRows)
-    console.log(selectedRows)
+
     return (
         <>
             <Box

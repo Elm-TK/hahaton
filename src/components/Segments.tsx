@@ -1,4 +1,4 @@
-import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
+import {SyntheticEvent, useEffect, useState} from "react";
 import MatrixStore, {Baseline, Discount} from "../store/MatrixStore.tsx";
 import {
     DataGrid,
@@ -50,7 +50,6 @@ export default function Segments() {
                 r.segment = quantity[1][i].segment
             rs.push(r)
             if (quantity[1][i].active) {
-                console.log(quantity[1][i])
                 selected.push(r.id)
             }
         }
@@ -62,9 +61,6 @@ export default function Segments() {
         setFreeSegments([...quantity[2], '—'])
     }
 
-    useEffect(() => {
-        fetchQuantityMatrices()
-    }, [])
 
     const selectMatrix = (name: string) => {
 
@@ -116,6 +112,13 @@ export default function Segments() {
         setRowModesModel(newRowModesModel);
     };
 
+    const createStorage = async () => {
+        return await  matrixParams.createStorage(selectedMatrix.id, selectedRows, updatedRows)
+    }
+
+    useEffect(() => {
+        fetchQuantityMatrices()
+    }, [])
     const columns: GridColDef[] = [
         {
             field: 'id',
@@ -180,9 +183,7 @@ export default function Segments() {
             },
         },
     ];
-    // console.log(bases, discounts, freeSegments)
 
-    // console.log('updatedRows', updatedRows)
     return (
         <>
             {bases.length > 0 ?
@@ -191,7 +192,7 @@ export default function Segments() {
                         value={selectedMatrix.name}
                         noOptionsText={'Такой категории нет'}
                         className="mr-5"
-                        options={bases.length > 1 ? [bases[0].name, bases[1].name] : ['awg']}
+                        options={bases.map((obj: Baseline) => obj.name)}
                         sx={{width: "100%", marginBottom: '15px'}}
                         ListboxProps={{style: {maxHeight: 300}}}
                         onInputChange={(_event: SyntheticEvent, value: string) =>
@@ -239,7 +240,7 @@ export default function Segments() {
                 />
             </Box>
             <Button variant="contained"
-                    onClick={() => console.log(selectedMatrix.id, selectedRows, updatedRows)}>Пуск</Button>
+                    onClick={() => createStorage()}>Пуск</Button>
         </>
     );
 }

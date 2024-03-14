@@ -1,8 +1,7 @@
-import {Autocomplete, CircularProgress, TextField} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
-import SearchParamsStore from "../store/SearchParamsStore.tsx";
-import MatrixStore, {Baseline, SearchParams} from "../store/MatrixStore.tsx";
+import MatrixStore, {Baseline, Discount, SearchParams} from "../store/MatrixStore.tsx";
 import Table from "./Table.tsx";
 
 
@@ -16,6 +15,7 @@ const Search = () => {
     const [reqRows, setReqRows] = useState<SearchParams[]>([])
     const [names, setNames] = useState<string[]>([])
     const [loces, setLoces] = useState<string[]>([])
+    const [cates, setCates] = useState<string[]>([])
     const [tableActive, setTableActive] = useState<boolean>(false)
 
     const matrixParams = new MatrixStore()
@@ -23,26 +23,32 @@ const Search = () => {
 
     const sendSearchParams = async () => {
         const lcs: string[] = []
+        const cats: string[] = []
         const response = await matrixParams.getRowsByParams([selectedMatrix, selectedCategories, selectedLocations])
         response.map((obj) => {
             lcs.push(obj.location)
+            cats.push(obj.category)
         })
         setReqRows(response)
         setLoces(lcs)
+        setCates(cats)
         setTableActive(true)
     }
 
     const fetchQuantityMatrices = async () => {
         const quantity = await matrixParams.getQuantityMatrices()
-        const baselinesNames: string[] = []
+        const matrices: string[] = []
         let cats: string[] = []
         let loces: string[] = []
         quantity[0].map((bases: Baseline) => {
-            baselinesNames.push(bases.name)
+            matrices.push(bases.name)
+        })
+        quantity[1].map((bases: Discount) => {
+            matrices.push(bases.name)
         })
         cats = quantity[3]
         loces = quantity[4]
-        setNames(baselinesNames)
+        setNames(matrices)
         setCategories(cats)
         setLocations(loces)
     }
@@ -129,9 +135,10 @@ const Search = () => {
                 >Найти</Button>
             </div>
             <>{tableActive ?
-                <Table matrixName={selectedMatrix} categories={categories} locations={loces}
+                <Table matrixName={selectedMatrix} categories={(!cates.length? categories: cates)} locations={(!loces.length ? locations : loces)}
                        rows={reqRows}/> :
-                <CircularProgress/>}</>
+                <p>выберите матрицу</p>}</>
+            {/*<CircularProgress/>*/}
         </div>
     );
 };
